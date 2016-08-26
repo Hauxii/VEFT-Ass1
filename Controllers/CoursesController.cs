@@ -8,7 +8,7 @@ namespace WebApplication.Controllers
     [Route("/api/courses")]
     public class CoursesController : Controller
     {
-        public List<Course> allCourses;
+        public List<Course> allCourses;        
         public CoursesController(){
             if(allCourses == null){
                 allCourses = new List<Course>{
@@ -42,7 +42,7 @@ namespace WebApplication.Controllers
             Course toFind = allCourses.Find(item => item.ID == id);
 
             if(toFind == null){
-                return StatusCode(404);
+                return NotFound();
             }
             return Ok(toFind);
         }
