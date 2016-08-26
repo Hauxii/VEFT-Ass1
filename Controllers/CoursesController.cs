@@ -50,11 +50,25 @@ namespace WebApplication.Controllers
         [HttpPost]
         public IActionResult CreateCourse([FromBody]Course newCourse)
         {            
+            if(newCourse == null){
+                return BadRequest();
+            }
             allCourses.Add(newCourse);
-            Console.WriteLine("smuuu");
-            Console.WriteLine(newCourse.ID);
             var location = Url.Link("GetCourseByID", new { id = newCourse.ID});
             return Created(location, newCourse);
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public IActionResult EditCourse([FromBody]Course edited)
+        {
+            int toEdit = allCourses.FindIndex(item => item.ID == edited.ID);
+            if(toEdit == -1){
+                return BadRequest();
+            }
+            allCourses[toEdit] = edited;
+            //allCourses.ForEach(item => Console.WriteLine(item.Name));
+            return Ok(edited);
         }
     
     }
