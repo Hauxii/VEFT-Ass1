@@ -48,28 +48,13 @@ namespace WebApplication.Controllers
         }
 
         [HttpPost]
-        //[ResponseType(typeof(Course))]
         public IActionResult CreateCourse([FromBody]Course newCourse)
-        {
-            
-            /*Course newCourse = new Course {
-                ID = data.ID,
-                TemplateID = data.TemplateID,
-                Name = data.Name,
-                StartDate = data.StartDate,
-                EndDate = data.EndDate
-            };*/
-            
-
+        {            
+            allCourses.Add(newCourse);
             Console.WriteLine("smuuu");
             Console.WriteLine(newCourse.ID);
             var location = Url.Link("GetCourseByID", new { id = newCourse.ID});
             return Created(location, newCourse);
-            /*
-            allCourses.Add(newCourse);
-            var location = Url.Link("GetCourseByID", new { id = newCourse.ID});
-            return Created(location, newCourse);
-            */
         }
     
     }
