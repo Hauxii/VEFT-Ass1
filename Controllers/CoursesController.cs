@@ -48,19 +48,23 @@ namespace WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCourse([FromBody]dynamic newCourse)
+        //[ResponseType(typeof(Course))]
+        public IActionResult CreateCourse([FromBody]Course newCourse)
         {
-            /*
-            Course newCourse = new Course {
-                ID = data.id,
-                TemplateID = data.templateid,
-                Name = data.name,
-                StartDate = data.startdate,
-                EndDate = data.enddate
-            };
-            */
             
-            return newCourse;
+            /*Course newCourse = new Course {
+                ID = data.ID,
+                TemplateID = data.TemplateID,
+                Name = data.Name,
+                StartDate = data.StartDate,
+                EndDate = data.EndDate
+            };*/
+            
+
+            Console.WriteLine("smuuu");
+            Console.WriteLine(newCourse.ID);
+            var location = Url.Link("GetCourseByID", new { id = newCourse.ID});
+            return Created(location, newCourse);
             /*
             allCourses.Add(newCourse);
             var location = Url.Link("GetCourseByID", new { id = newCourse.ID});
