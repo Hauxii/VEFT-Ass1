@@ -62,14 +62,30 @@ namespace WebApplication.Controllers
         [Route("{id:int}")]
         public IActionResult EditCourse([FromBody]Course edited)
         {
+            //TODO: nota id úr urli / eða passa uppa að ekki sé hægt að breyta id
+            if(edited == null){
+                return BadRequest();
+            }
             int toEdit = allCourses.FindIndex(item => item.ID == edited.ID);
             if(toEdit == -1){
                 return BadRequest();
             }
+            //TODO: validate input?
             allCourses[toEdit] = edited;
             //allCourses.ForEach(item => Console.WriteLine(item.Name));
             return Ok(edited);
         }
     
+        [HttpDelete]
+        public IActionResult DeleteCourse(int idToDelete)
+        {
+            int index = allCourses.FindIndex(item => item.ID == idToDelete);
+            if(index == -1){
+                return BadRequest();
+            }
+            allCourses.RemoveAt(index);
+            //allCourses.ForEach(item => Console.WriteLine(item.Name));
+            return NoContent();
+        }
     }
 }
