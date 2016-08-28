@@ -1,6 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Collections.Generic;
 
 namespace WebApplication.Models
 {
@@ -12,5 +12,6 @@ namespace WebApplication.Models
         public DateTime StartDate;
         public DateTime EndDate;
 
+        public List<Student> students;
     }
 }

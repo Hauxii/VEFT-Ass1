@@ -17,22 +17,70 @@ namespace WebApplication.Controllers
                         TemplateID = "T-514-VEFT",
                         ID = 1,
                         StartDate = new DateTime(2016, 08, 17),
-                        EndDate = new DateTime(2016-11-08)
+                        EndDate = new DateTime(2016-11-08),
+                        students = new List<Student> {
+                            new Student {
+                                SSN = "031191-1234",
+                                Name = "Haukur Ingi"
+                            },
+                            new Student {
+                                SSN = "131190-1234",
+                                Name = "Vilhjalmur Alex"
+                            }
+                        }
                     },
                     new Course {
                         Name = "Honnun og smidi",
                         TemplateID = "T-302-HONN",
                         ID = 2,
                         StartDate = new DateTime(2016, 08, 17),
-                        EndDate = new DateTime(2016-11-08)
+                        EndDate = new DateTime(2016-11-08),
+                        students = new List<Student> {
+                            new Student {
+                                SSN = "031191-1234",
+                                Name = "Haukur Ingi"
+                            },
+                            new Student {
+                                SSN = "131190-1234",
+                                Name = "Vilhjalmur Alex"
+                            }
+                        }
                     }
                 };
             }
         }
-
-        public List<Course> GetCourses()
+        //validating course input to some extent
+        private bool isNewCourseValid(Course course)
         {
-            return allCourses;
+            if(allCourses.FindIndex(item => item.ID == course.ID) != -1){
+                return false;
+            }
+            if(course.Name == null || course.Name == ""){
+                return false;
+            }
+            if(course.TemplateID == null || course.TemplateID == ""){
+                return false;
+            }
+            if(course.StartDate == null || course.EndDate == null){
+                return false;
+            }
+            return true;
+        }
+        //validating student input to some extent
+        private bool isNewStudentValid(Student student)
+        {
+            if(student.Name == null || student.Name == ""){
+                return false;
+            }
+            if(student.SSN == null || student.SSN == ""){
+                return false;
+            }
+            return true;
+        }
+
+        public IActionResult GetCourses()
+        {
+            return Ok(allCourses);
         }
 
         [HttpGet]
@@ -50,7 +98,7 @@ namespace WebApplication.Controllers
         [HttpPost]
         public IActionResult CreateCourse([FromBody]Course newCourse)
         {            
-            if(newCourse == null){
+            if(!isNewCourseValid(newCourse)){
                 return BadRequest();
             }
             allCourses.Add(newCourse);
@@ -60,19 +108,22 @@ namespace WebApplication.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
-        public IActionResult EditCourse([FromBody]Course edited)
+        public IActionResult EditCourse(int id, [FromBody]Course edited)
         {
-            //TODO: nota id úr urli / eða passa uppa að ekki sé hægt að breyta id
-            if(edited == null){
+            int toEdit = allCourses.FindIndex(item => item.ID == edited.ID);
+            if(id != allCourses[toEdit].ID){
+                return BadRequest("Cannot change ID");
+            }
+
+            if(!isNewCourseValid(edited)){
                 return BadRequest();
             }
-            int toEdit = allCourses.FindIndex(item => item.ID == edited.ID);
+
             if(toEdit == -1){
                 return BadRequest();
             }
-            //TODO: validate input?
+
             allCourses[toEdit] = edited;
-            //allCourses.ForEach(item => Console.WriteLine(item.Name));
             return Ok(edited);
         }
     
@@ -84,8 +135,35 @@ namespace WebApplication.Controllers
                 return BadRequest();
             }
             allCourses.RemoveAt(index);
-            //allCourses.ForEach(item => Console.WriteLine(item.Name));
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("{id:int}/students", Name = "GetStudents")]
+        public IActionResult GetStudents(int id){
+            int index = allCourses.FindIndex(item => item.ID == id);
+            if(index == -1){
+                return NotFound();
+            }
+            return Ok(allCourses[index].students);
+        }
+
+        [HttpPost]
+        [Route("{id:int}/students", Name = "AddStudents")]
+        public IActionResult AddStudent(int id, [FromBody]Student newStudent)
+        {
+            int index = allCourses.FindIndex(item => item.ID == id);
+            if(index == -1){
+                return NotFound();
+            }
+
+            if(!isNewStudentValid(newStudent)){
+                return BadRequest();
+            }
+
+            allCourses[index].students.Add(newStudent);
+            return Created("GetStudents", newStudent);
         }
     }
 }
+
